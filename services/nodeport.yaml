@@ -1,0 +1,43 @@
+## De todas formas un NodePort crea un ClusterIP por interno para la comunicación del cluster
+## Si no se especifica el puerto que se le asigna al servicio de NodePort
+## este toma un puerto al azar entre 3000 y 32767
+## NOTA: Recuerda que si estas usando minikube, necesitas la ip 
+## de minikube por que esa es la ip de tu cluster
+##  $ minikube ip
+## y consultas el puerto del servicio para unir la ip con el puerto
+## $kubectl get svc -l app=backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-np
+  labels:
+    app: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-np
+  labels:
+    app: backend
+spec:
+  type: NodePort
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 8080 #Puerto en el que el servicio va estar escuchando
+    targetPort: 80 # El puerto de los pod que va a contestar
+    nodePort: 32222  # Especifica el puerto 4040 para el servicio NodePort

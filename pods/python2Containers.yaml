@@ -1,0 +1,21 @@
+# Ejemplo de dos containers en un pod
+# Se ve que cada container tiene sus propios archivos index.html al entrar en ellos
+# Para entrar en algún container es:
+#   $ kubectl exec -it doscont -c cont1 -- sh
+# Para instalar curl en el container, para consular desde el localhost el otro arhivo
+# del otro container es:
+#   $  apk add -U curl
+# NOTA: Recuerda que al estar los dos containers en el mismo Pod comparten la misma red
+# por eso comparten el localhost y los mimos puertos, porque el pod solo es un wrapper
+apiVersion: v1
+kind: Pod
+metadata:
+  name: doscont
+spec:
+  containers:
+  - name: cont1
+    image: python:3.6-alpine
+    command: ["sh", "-c", "echo hello > index.html && python -m http.server 8080"]
+  - name: cont2
+    image: python:3.6-alpine
+    command: ["sh", "-c", "echo hello2 > index.html && python -m http.server 8081"]
