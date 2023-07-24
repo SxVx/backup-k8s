@@ -1,7 +1,5 @@
-## Recuerda que para este ejemplo estas usando un clusterIP
-## por lo que no se podrá ver desde el navegador.
-## Cuando no se especifica que tipo de servicio es por defecto
-## es un ClusterIP
+## Recuerda la ip del cluster (minikube ip) y el puerto asignado por NodePort (kubectl get svc)
+## IMPORTANTE: Si lo vas a ver en el navegador se ve en http no en https
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +18,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: k8s-hands-on
+        image: k8s-hands-on:v2
         imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
@@ -30,9 +28,11 @@ metadata:
   labels:
     app: backend
 spec:
+  type: NodePort
   selector:
     app: backend
   ports:
   - protocol: TCP
     port: 80
     targetPort: 9090
+    nodePort: 30090 # Puerto fijado de NodePort
